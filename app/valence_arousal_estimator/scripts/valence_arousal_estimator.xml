@@ -1,0 +1,56 @@
+<application>
+    <name>valenceArousalEstimator</name>
+
+    <authors>
+        <author email="nima.abaeian@iit.it"> Nima Abaeian </author> 
+    </authors>
+
+    <description>
+        Real-time valence and arousal estimation using EmoNet.
+        Subscribes to face annotations and webcam images, 
+        publishes continuous valence/arousal values for detected faces.
+    </description>
+
+    <!-- ======== MODULES ======== -->
+    
+    <module>
+        <name>faceID</name>
+        <parameters></parameters>
+        <node>localhost</node>
+    </module>
+
+    <module>
+        <name>valence_arousal_estimator</name>
+        <parameters>--device cuda --model_path pretrained/emonet_8.pth --nclasses 8 --min_score 0.5</parameters>
+        <node>localhost</node>
+    </module>
+
+    <module>
+        <name>yarpdev</name>
+        <parameters>--device openCVGrabber --name /webcam --camera 0 --width 640 --height 480 --framerate 30</parameters>
+        <node>localhost</node>
+    </module>
+
+    <!-- ======== Connections ======== -->
+
+    <!-- FaceID connections -->
+    <connection>
+        <from>/webcam</from>
+        <to>/faceID/image:i</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+    <!-- Valence/Arousal Estimator connections -->
+    <connection>
+        <from>/faceID/annotations:o</from>
+        <to>/emonet/faceID/annotations:i</to>
+        <protocol>tcp</protocol>
+    </connection>
+ 
+    <connection>
+        <from>/webcam</from>
+        <to>/emonet/webcam:i</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+</application>
