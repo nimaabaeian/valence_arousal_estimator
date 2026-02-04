@@ -204,28 +204,73 @@ valence_arousal_estimator/
 
 ---
 
-## 🔗 Complete Example Setup
+## � How to Run
+
+### Complete Workflow Example
+
+1. **Start YARP server** (in a separate terminal):
+```bash
+yarpserver
+```
+
+2. **Launch the faceID module**:
+```bash
+faceID
+```
+
+3. **Start camera/image source**:
+```bash
+yarpdev --device opencv_grabber --name /webcam
+```
+
+4. **Launch valence-arousal estimator**:
+```bash
+valence_arousal_estimator
+```
+
+5. **Connect the ports**:
+```bash
+yarp connect /webcam /faceID/image:i
+yarp connect /faceID/annotations:o /emonet/faceID/annotations:i
+yarp connect /webcam /emonet/webcam:i
+```
+
+6. **Monitor output**:
+```bash
+yarp read ... /emonet/valence_arousal:o
+```
+
+### Expected Output Format
+```
+"PersonName1" 0.42 0.31 "PersonName2" -0.15 0.68
+```
+Each person detected gets: name (string), valence (float), arousal (float).
+
 ---
 
-## 🐛 Troubleshooting
+## 📊 Understanding the Output
 
-### Issue: "YARP network not available"
-- Ensure `yarpserver` is running
-- Check network configuration: `yarp detect`
+### Valence-Arousal Space
 
-### Issue: "Model file not found"
-- Verify model exists in `modules/valence_arousal_estimator/pretrained/`
-- Specify explicit path: `--model_path /full/path/to/emonet_8.pth`
+```
+        High Arousal (+1.0)
+              ↑
+    Angry  Excited  Joyful
+       ↖     ↑     ↗
+         ＼   |   ／
+Negative ←---+---→ Positive
+(-1.0)   ／   |   ＼    (+1.0)
+       ↙     ↓     ↘
+    Sad   Calm   Relaxed
+              ↓
+        Low Arousal (-1.0)
+```
 
-### Issue: "CUDA out of memory"
-- Switch to CPU: `--device cpu`
-- Reduce batch size (fewer simultaneous faces)
-- Use smaller input size: `--input_size 128`
-
-### Issue: "No faces detected"
-- Lower detection threshold: `--min_score 0.3`
-- Verify face detection module is running and publishing
-- Check port connections: `yarp name list`
+**Examples:**
+- **Happy:** valence = +0.8, arousal = +0.6
+- **Angry:** valence = -0.7, arousal = +0.9
+- **Sad:** valence = -0.6, arousal = -0.3
+- **Relaxed:** valence = +0.3, arousal = -0.8
 
 ---
 
@@ -255,81 +300,3 @@ If you use this code or the EmoNet model, please cite:
   url     = {https://www.nature.com/articles/s42256-020-00280-0}
 }
 ```
-
----
-
-## 👥 Credits
-
-- **Original EmoNet Model:** [face-analysis/emonet](https://github.com/face-analysis/emonet)
-- **Authors:** Antoine Toisoul, Jean Kossaifi, Adrian Bulat, Georgios Tzimiropoulos, Maja Pantic
-- **Organizations:** Samsung AI Center Cambridge, Imperial College London
-- **YARP Integration:** This repository
-
-**Full Paper (View-Only):** https://rdcu.be/cdnWi
-
----
-
-## 📞 Support
-
-For issues related to:
-- **YARP integration:** Open an issue in this repository
-- **EmoNet model:** Refer to the [original repository](https://github.com/face-analysis/emonet)
-- **YARP framework:** Visit [YARP documentation](https://www.yarp.it)o /yourApp/emotions:i
-```
-
----
-
-## 📊 Understanding the Output
-
-### Valence-Arousal Space
-
-```
-        High Arousal (+1.0)
-              ↑
-    Angry  Excited  Joyful
-       ↖     ↑     ↗
-         ＼   |   ／
-Negative ←---+---→ Positive
-(-1.0)   ／   |   ＼    (+1.0)
-       ↙     ↓     ↘
-    Sad   Calm   Relaxed
-              ↓
-        Low Arousal (-1.0)
-```
-
-**Examples:**
-- **Happy:** valence = +0.8, arousal = +0.6
-- **Angry:** valence = -0.7, arousal = +0.9
-- **Sad:** valence = -0.6, arousal = -0.3
-- **Relaxed:** valence = +0.3, arousal = -0.8
-
-## License
-
-This code is available under a **Creative Commons Attribution-Non Commercial-No Derivatives 4.0 International Licence (CC BY-NC-ND)**.
-
-See [LICENSE.txt](LICENSE.txt) for full details.
-
-## Citation
-
-If you use this code, please cite:
-
-```bibtex
-@article{toisoul2021estimation,
-  author  = {Antoine Toisoul and Jean Kossaifi and Adrian Bulat and Georgios Tzimiropoulos and Maja Pantic},
-  title   = {Estimation of continuous valence and arousal levels from faces in naturalistic conditions},
-  journal = {Nature Machine Intelligence},
-  year    = {2021},
-  url     = {https://www.nature.com/articles/s42256-020-00280-0}
-}
-```
-
-## Credits
-
-- **Original EmoNet Model:** https://github.com/face-analysis/emonet
-- **Authors:** Antoine Toisoul, Jean Kossaifi, Adrian Bulat, Georgios Tzimiropoulos, Maja Pantic
-- **YARP Module Adaptation:** This repository
-
----
-
-**Full paper (view-only):** https://rdcu.be/cdnWi
-
