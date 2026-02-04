@@ -4,15 +4,15 @@ channels:
   - pytorch
   - nvidia
 dependencies:
-  - python=3.10
+  - python=3.10.19
   - pip
-  - numpy<2
+  - numpy=1.26.4
   - pytorch::pytorch=2.0.0
   - pytorch::pytorch-cuda=11.8
-  - libjpeg-turbo  # Explicit libjpeg to fix symbol conflicts
-  - libtiff  # Explicit libtiff for compatibility
-  - opencv  # Required for cv2.resize
-  - intel-openmp  # Required for MKL support
+  - libjpeg-turbo=3.1.2  # Explicit libjpeg to fix symbol conflicts
+  - libtiff=4.7.1  # Explicit libtiff for compatibility
+  - opencv=4.13.0  # Required for cv2.resize
+  - intel-openmp=2025.0.0  # Required for MKL support
 
 # Note: YARP Python bindings must be installed separately
 # Install YARP from system packages or build from source with Python bindings enabled
